@@ -25,14 +25,16 @@ int main() {
 
     srand(time(NULL));
     
-    // Gere um número aleatório no intervalo de 65 a 68
-    int numero_aleatorio = (rand() % 4) + 65;
+   
     
     // Imprima o número aleatório
     //printf("Número aleatório entre 65 e 68: %d\n", numero_aleatorio);
 
     read_file_create_graph(&graph_a, file_a);
     //print_matrix(adjacency_matrix_a);
+
+     // Gere um número aleatório no intervalo de 65 a 68
+    int numero_aleatorio = (rand() % num_vertices) + 65;
 
     print_complete_graph(graph_a);
 
