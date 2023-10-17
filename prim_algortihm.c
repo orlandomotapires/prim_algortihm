@@ -32,9 +32,11 @@ int main() {
     //printf("Número aleatório entre 65 e 68: %d\n", numero_aleatorio);
 
     read_file_create_graph(&graph_a, file_a);
-    print_matrix(adjacency_matrix_a);
+    //print_matrix(adjacency_matrix_a);
 
-    prim(graph_a, numero_aleatorio);
+    print_complete_graph(graph_a);
+
+    //prim(graph_a, numero_aleatorio);
 
     fclose(file_a);
 

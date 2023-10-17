@@ -9,11 +9,11 @@
 typedef struct Node {
     struct Graph* pointed_letter;
     struct Node* adjacency_list;
+    int weight;
 } Node;
 
 typedef struct Graph {
     char letter;
-    int weight;
     Node* main_list;
 } Graph;
 
@@ -53,7 +53,6 @@ int insert_main_list(Graph** l, char e) {
     new_node->main_list = allocate_node();
 
     new_node->letter = e;
-    new_node->weight = 0;
 
     if (new_node == NULL || new_node->main_list == NULL) return 0;
 
@@ -131,6 +130,8 @@ int insert_at_end_adj_list(Node** l, Graph** e, int num) {
     if (new_node == NULL) return 0;
     new_node->pointed_letter = *e;
     new_node->adjacency_list = NULL;
+    new_node->weight=num;
+
     if (is_node_list_empty(*l)) {
         *l = new_node;
     } else {
@@ -148,10 +149,10 @@ void print_node(Node* list) {
     current = list;
     while (current != NULL) {
         if (current->adjacency_list == NULL) {
-            printf(" %c|%d \n", current->pointed_letter->letter, current->pointed_letter->weight);
+            printf(" %c|%d \n", current->pointed_letter->letter, current->weight);
             current = current->adjacency_list;
         } else {
-            printf(" %c|%d ->", current->pointed_letter->letter, current->pointed_letter->weight);
+            printf(" %c|%d ->", current->pointed_letter->letter, current->weight);
             current = current->adjacency_list;
         }
     }
@@ -163,7 +164,7 @@ void print_complete_graph(Graph* complete_list) {
     current = complete_list;
     while (current->main_list->pointed_letter != NULL) {
         if (current->letter != ' ')
-            printf("%c|%d ->", current->letter, current->weight);
+            printf("%c ->", current->letter);
         print_node(current->main_list->adjacency_list);
         current = current->main_list->pointed_letter;
     }

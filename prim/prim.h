@@ -30,18 +30,24 @@ void read_file_create_graph(Graph **graph, FILE *file) {
     }
 
     int weight;
-    while (!feof(file)) {
+    while (!feof(file) && i < num_vertices) {
+        printf("Proximo\n");
         for (a = 0; a < num_vertices; a++) {
             fscanf(file, "%d", &weight);
 
-            weight -= 48;
+            if(weight > 0){
+                node_to_insert = find_vertex(*graph, a + 1);
+                base_node = find_vertex(*graph, (i + 1));
 
-            node_to_insert = find_vertex(*graph, a + i);
-            base_node = find_vertex(*graph, (i + 1));
-            insert_at_end_adj_list(&node_to_insert->main_list, &base_node, weight);
-        
-            adjacency_matrix_a[i][a] = weight;
+                // printf("nti: %d|%c\n", node_to_insert->weight, node_to_insert->letter);
+                // printf("bn: %d|%c\n", base_node->weight, base_node->letter);
+                insert_at_end_adj_list(&node_to_insert->main_list, &base_node, weight);
             
+                adjacency_matrix_a[i][a] = weight;
+
+                // printf("Valor lido: %d\n", weight);
+                printf("matrix: %d\n", adjacency_matrix_a[i][a]);
+            }
         }
         i++;
     }
