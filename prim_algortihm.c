@@ -23,6 +23,8 @@ int main() {
         return 1;
     }
 
+    memset(visited, 0, sizeof(visited));
+
     srand(time(NULL));
     
     read_file_create_graph(&graph_a, file_a);

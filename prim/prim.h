@@ -67,10 +67,11 @@ void read_file_create_graph(Graph **graph, FILE *file) {
 
 void insert_neighbors_on_list(Node *current){
     while (current != NULL) {
-        open_nodes[last_pos].letter = current->pointed_letter->letter;
-        open_nodes[last_pos].weight = current->weight;
-
-        last_pos++;
+        if(visited[current->pointed_letter->letter] == 0){
+            open_nodes[last_pos].letter = current->pointed_letter->letter;
+            open_nodes[last_pos].weight = current->weight;
+            last_pos++;
+        }
            
         if (current->adjacency_list == NULL) {
             printf(" %c|%d \n", current->pointed_letter->letter, current->weight);
@@ -99,23 +100,42 @@ void print_open_nodes(){
     printf("\n");
 }
 
+int not_all_visited(){
+    for(int i = 65; i < 65 + num_vertices; i++){
+        if(visited[i] == 0) return 1;
+    }
+
+    return 0;
+}
+
 void prim(Graph *graph, int num_vertex){
     Graph *start_node;
 
-    start_node = initialize_graph();
-    start_node = find_vertex(graph, num_vertex);
+    while(not_all_visited()){
+        start_node = initialize_graph();
+        start_node = find_vertex(graph, num_vertex);
 
-    insert_neighbors_on_list(start_node->main_list->adjacency_list);
-    
-    printf("BEFORE: \n");
-    print_open_nodes();
+        visited[start_node->letter] = 1;
 
-    pedro_bubble();
-    printf("AFTER: \n");
-    print_open_nodes();
+        for(int k = 0, h = 0; k < last_pos; k++){
+            if(visited[open_nodes[k].letter] != 1){
+                open_nodes[h] = open_nodes[k];
+                h++;
+            }
+        }
 
-    
+        print_open_nodes();
 
+        insert_neighbors_on_list(start_node->main_list->adjacency_list);
+        
+        printf("BEFORE: \n");
+        print_open_nodes();
 
+        pedro_bubble();
+        printf("AFTER: \n");
+        print_open_nodes();
+
+        num_vertex = open_nodes[0].letter;
+    }
 
 }
