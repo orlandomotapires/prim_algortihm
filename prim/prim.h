@@ -1,5 +1,4 @@
 #include "graph.h"
-#include "stack.h"
 
 int num_vertices = 0;
 
@@ -169,7 +168,7 @@ void prim(Graph *graph, Graph **final_tree, int num_vertex){
         current_node = initialize_graph();     
         current_node = find_vertex(graph, num_vertex);
 
-        if(visited[current_node->letter] == 0) insert_neighbors_on_list(current_node->main_list->adjacency_list);
+        insert_neighbors_on_list(current_node->main_list->adjacency_list);
 
         pedro_bubble();
 

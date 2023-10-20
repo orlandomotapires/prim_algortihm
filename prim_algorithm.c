@@ -31,7 +31,7 @@ int main() {
     
     read_file_create_graph(&graph_a, &final_tree, file_a);
 
-    // Gere um número aleatório no intervalo de 1 a 4 para ser o no inicial
+    // Gere um número aleatório no intervalo de 1 a num_vertices para ser o no inicial
     int numero_aleatorio = (rand() % num_vertices) + 1;
 
     printf("Complete Graph: \n");
