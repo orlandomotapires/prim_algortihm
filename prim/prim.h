@@ -31,7 +31,7 @@ void pedro_bubble(){
     }
 }
 
-void read_file_create_graph(Graph **graph, FILE *file) {
+void read_file_create_graph(Graph **graph, Graph **final_tree, FILE *file) {
     int a, i = 0;
     char Line[300];
 
@@ -44,6 +44,7 @@ void read_file_create_graph(Graph **graph, FILE *file) {
         for (a = 0; a < (strlen(Line)); a++) {
             if (Line[a] != ' '){
                 insert_main_list(graph, Line[a]);
+                insert_main_list(final_tree, Line[a]);
                 if(Line[a] >= 65) num_vertices++;
             }   
         }
@@ -74,10 +75,10 @@ void insert_neighbors_on_list(Node *current){
         }
            
         if (current->adjacency_list == NULL) {
-            printf(" %c|%d \n", current->pointed_letter->letter, current->weight);
+            //printf("%c|%d \n", current->pointed_letter->letter, current->weight);
             current = current->adjacency_list;
         } else {
-            printf(" %c|%d ->", current->pointed_letter->letter, current->weight);
+            //printf("%c|%d ->", current->pointed_letter->letter, current->weight);
             current = current->adjacency_list;
         }
 
@@ -108,34 +109,84 @@ int not_all_visited(){
     return 0;
 }
 
-void prim(Graph *graph, int num_vertex){
-    Graph *start_node;
+void remove_if_visited(){
+    for(int k = 0, h = 0; k < last_pos; k++){
+        if(visited[open_nodes[k].letter] != 1){
+            open_nodes[h] = open_nodes[k];
+            h++;
+        }
+    }
+}
 
-    while(not_all_visited()){
-        start_node = initialize_graph();
-        start_node = find_vertex(graph, num_vertex);
+int search_node_from(Graph *graph, tp_node node){
+    Graph* current;
+    Node* aux;
 
-        visited[start_node->letter] = 1;
+    int result = 1;
 
-        for(int k = 0, h = 0; k < last_pos; k++){
-            if(visited[open_nodes[k].letter] != 1){
-                open_nodes[h] = open_nodes[k];
-                h++;
-            }
+    current = graph;
+    while (current->main_list->pointed_letter != NULL) {
+
+        Node* current2;
+        current2 = current->main_list->adjacency_list;
+
+        while (current2 != NULL) {
+            if(current2->pointed_letter->letter == node.letter && current2->weight == node.weight) return result;
+            current2 = current2->adjacency_list;
         }
 
-        print_open_nodes();
+        current = current->main_list->pointed_letter;
+        result++;
+    }
+}
 
-        insert_neighbors_on_list(start_node->main_list->adjacency_list);
+void insert_node_in_tree(Graph **final_tree, Graph *graph, tp_node node){
+    Graph *node_to_insert;
+    Graph *base_node;
+
+    node_to_insert = initialize_graph();
+    base_node = initialize_graph();
+    
+    int node_from = search_node_from(graph, node);
+
+    node_to_insert = find_vertex(*final_tree, node.letter - 64);
+    base_node = find_vertex(*final_tree, node_from);
+
+    insert_at_end_adj_list(&node_to_insert->main_list, &base_node, node.weight);
+
+    base_node = find_vertex(*final_tree, node.letter - 64);
+    node_to_insert = find_vertex(*final_tree, node_from);
+
+    insert_at_end_adj_list(&node_to_insert->main_list, &base_node, node.weight);
+}
+
+void prim(Graph *graph, Graph **final_tree, int num_vertex){
+    Graph *current_node;
+
+    printf("\nChoices: %c|%d ", num_vertex+64, 0);
+    while(not_all_visited()){
         
-        printf("BEFORE: \n");
-        print_open_nodes();
+        current_node = initialize_graph();     
+        current_node = find_vertex(graph, num_vertex);
+
+        if(visited[current_node->letter] == 0) insert_neighbors_on_list(current_node->main_list->adjacency_list);
 
         pedro_bubble();
-        printf("AFTER: \n");
-        print_open_nodes();
 
-        num_vertex = open_nodes[0].letter;
+        visited[current_node->letter] = 1;
+
+        remove_if_visited();
+
+        if(not_all_visited()) printf("-> %c|%d ", open_nodes[0].letter, open_nodes[0].weight);
+
+        num_vertex = open_nodes[0].letter - 64;
+
+        if(not_all_visited()) insert_node_in_tree(final_tree, graph, open_nodes[0]);
     }
+
+    printf("\n\n");
+
+    printf("Final tree: \n");
+    print_complete_graph(*final_tree);
 
 }
